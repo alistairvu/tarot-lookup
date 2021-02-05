@@ -1,10 +1,9 @@
 import { useNavigation } from "@react-navigation/native"
-import React, { useEffect } from "react"
+import React from "react"
 import {
   TouchableOpacity,
   StyleSheet,
   View,
-  ImageSourcePropType,
   useColorScheme,
   ActivityIndicator,
 } from "react-native"

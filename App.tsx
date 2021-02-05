@@ -1,5 +1,5 @@
 import React from "react"
-import { StyleSheet, Text, useColorScheme, View } from "react-native"
+import { StyleSheet, useColorScheme } from "react-native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { RecoilRoot } from "recoil"
 import { NavigationContainer } from "@react-navigation/native"

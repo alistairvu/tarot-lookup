@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { SearchBar, Text } from "react-native-elements"
+import { SearchBar } from "react-native-elements"
 import {
   ScrollView,
   ActivityIndicator,

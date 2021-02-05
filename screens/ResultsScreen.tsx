@@ -3,7 +3,6 @@ import { Image, Text } from "react-native-elements"
 import {
   View,
   StyleSheet,
-  SafeAreaView,
   ActivityIndicator,
   ScrollView,
   useColorScheme,

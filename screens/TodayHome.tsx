@@ -3,12 +3,11 @@ import { Image, Text } from "react-native-elements"
 import {
   View,
   StyleSheet,
-  ScrollView,
   Dimensions,
   useColorScheme,
   ActivityIndicator,
 } from "react-native"
-import { Header, Button } from "react-native-elements"
+import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView } from "../components"
 import axios from "axios"
