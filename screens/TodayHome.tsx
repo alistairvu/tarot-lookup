@@ -173,14 +173,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   blankContainer: {
-    width: Dimensions.get("window").width * 0.9,
-    height: Dimensions.get("window").width * 0.9,
+    width:
+      Math.min(
+        Dimensions.get("window").width,
+        Dimensions.get("window").height
+      ) * 0.9,
+    height:
+      Math.min(
+        Dimensions.get("window").width,
+        Dimensions.get("window").height
+      ) * 0.9,
     justifyContent: "center",
     alignItems: "center",
   },
   image: {
-    width: Dimensions.get("window").width * 0.9,
-    height: Dimensions.get("window").width * 0.9,
+    width:
+      Math.min(
+        Dimensions.get("window").width,
+        Dimensions.get("window").height
+      ) * 0.9,
+    height:
+      Math.min(
+        Dimensions.get("window").width,
+        Dimensions.get("window").height
+      ) * 0.9,
     resizeMode: "contain",
   },
   h4Text: {
@@ -188,7 +204,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   button: {
-    width: Dimensions.get("window").width * 0.9,
+    width:
+      Math.min(
+        Dimensions.get("window").width,
+        Dimensions.get("window").height
+      ) * 0.9,
     height: 50,
     borderRadius: 10,
   },
