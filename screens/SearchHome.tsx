@@ -6,7 +6,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   useColorScheme,
+  View,
 } from "react-native"
+import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view"
+import { Text } from "react-native-elements"
 import axios from "axios"
 import { AppHeader, BodyView, SearchResult } from "../components"
 
@@ -25,7 +28,12 @@ export const SearchHome = () => {
       shortName: item.name_short,
       imageLink: `https://tarot-photo-api.herokuapp.com/images/${item.name_short}`,
       name: item.name,
-      type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
+      type:
+        item.suit === undefined
+          ? "Major Arcana"
+          : "Minor Arcana - " +
+            item.suit.charAt(0).toUpperCase() +
+            item.suit.slice(1),
     }))
     setResults(cardData)
     setLoaded(true)
@@ -60,20 +68,43 @@ export const SearchHome = () => {
         }}
       />
 
-      {loaded ? (
-        <ScrollView>
-          {results!.map((item, index) => (
-            <SearchResult key={`${item}${index}`} {...item} />
-          ))}
-        </ScrollView>
-      ) : (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <ActivityIndicator />
-        </KeyboardAvoidingView>
-      )}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        {loaded ? (
+          <ScrollView>
+            {results.length > 0 ? (
+              results!.map((item, index) => (
+                <SearchResult key={`${item}${index}`} {...item} />
+              ))
+            ) : (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 20,
+                }}
+              >
+                <Text
+                  h4
+                  style={{
+                    color: colorScheme === "dark" ? "white" : "#222222",
+                  }}
+                >
+                  No results.
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+        ) : (
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <ActivityIndicator />
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </BodyView>
   )
 }

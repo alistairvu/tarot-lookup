@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Image, Text } from "react-native-elements"
 import {
   View,
@@ -12,6 +12,7 @@ import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView } from "../components"
 import axios from "axios"
 import { useNavigation } from "@react-navigation/native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const TodayHome = () => {
   const [pressed, setPressed] = useState<boolean>(false)
@@ -22,6 +23,38 @@ export const TodayHome = () => {
   const navigation = useNavigation()
   const colorScheme = useColorScheme()
 
+  const checkDrawn = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@last_drawn")
+      if (value === null) {
+        setPressed(false)
+        return
+      }
+      const {
+        dateString,
+        drawnName,
+        drawnShortName,
+        drawnReverse,
+      } = JSON.parse(value)
+      if (
+        new Date(dateString).setHours(0, 0, 0, 0) ===
+        new Date().setHours(0, 0, 0, 0)
+      ) {
+        setName(drawnName)
+        setShortName(drawnShortName)
+        setReverse(drawnReverse)
+        setPressed(true)
+        setLoaded(true)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    checkDrawn()
+  }, [])
+
   const handlePress = async () => {
     setPressed(true)
     setLoaded(false)
@@ -30,10 +63,20 @@ export const TodayHome = () => {
     )
     const { cards } = res.data
     const { name, name_short } = cards[0]
+    const reversed = Math.random() > 0.5
     setName(name)
-    setReverse(Math.random() > 0.5)
+    setReverse(reversed)
     setShortName(name_short)
     setLoaded(true)
+    await AsyncStorage.setItem(
+      "@last_drawn",
+      JSON.stringify({
+        dateString: new Date().toDateString(),
+        drawnName: name,
+        drawnShortName: name_short,
+        drawnReverse: reversed,
+      })
+    )
   }
 
   const generateBody = () =>
@@ -57,7 +100,7 @@ export const TodayHome = () => {
             color: colorScheme === "dark" ? "white" : "#222222",
           }}
         >
-          Your card is {"\n" + name} {reverse && "(Reversed)"}
+          Today's card is {"\n" + name} {reverse && "(Reversed)"}
         </Text>
         <Button
           title="Explore this Card"
@@ -101,7 +144,7 @@ export const TodayHome = () => {
               color: colorScheme === "dark" ? "white" : "#222222",
             }}
           >
-            Draw your next card.
+            Draw today's card.
           </Text>
           <Button
             title="Draw a Card"
