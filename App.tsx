@@ -3,7 +3,12 @@ import { StyleSheet, useColorScheme } from "react-native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { RecoilRoot } from "recoil"
 import { NavigationContainer } from "@react-navigation/native"
-import { SearchScreen, SpreadScreen, TodayScreen } from "./screens"
+import {
+  SearchScreen,
+  SettingsScreen,
+  SpreadScreen,
+  TodayScreen,
+} from "./screens"
 import { Ionicons } from "@expo/vector-icons"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 
@@ -66,6 +71,22 @@ export default function App() {
                   <Ionicons name="search-sharp" size={24} color={color} />
                 ) : (
                   <Ionicons name="search-outline" size={24} color={color} />
+                ),
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              tabBarIcon: ({ focused, color }) =>
+                focused ? (
+                  <Ionicons name="ios-settings-sharp" size={24} color={color} />
+                ) : (
+                  <Ionicons
+                    name="ios-settings-outline"
+                    size={24}
+                    color={color}
+                  />
                 ),
             }}
           />

@@ -6,6 +6,8 @@ import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView, HomeBody } from "../../components"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useRecoilState } from "recoil"
+import { settingsAtom } from "../../recoil/settingsState"
 
 export const TodayHome = () => {
   const [pressed, setPressed] = useState<boolean>(false)
@@ -16,6 +18,23 @@ export const TodayHome = () => {
   const [reverse, setReverse] = useState<boolean>()
   const { drawCard } = useTarot()
   const colorScheme = useColorScheme()
+
+  const [settings, setSettings] = useRecoilState(settingsAtom)
+
+  const fetchSettings = async () => {
+    try {
+      const settingsData = await AsyncStorage.getItem("@settings")
+      if (settingsData === null || JSON.parse(settingsData) === null) {
+        console.log("is null")
+        await AsyncStorage.setItem("@settings", JSON.stringify(settings))
+        return
+      } else {
+        setSettings(JSON.parse(settingsData))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const checkDrawn = async () => {
     try {
@@ -48,6 +67,7 @@ export const TodayHome = () => {
   }
 
   useEffect(() => {
+    fetchSettings()
     checkDrawn()
   }, [])
 

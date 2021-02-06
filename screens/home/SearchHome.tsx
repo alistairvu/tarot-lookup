@@ -11,6 +11,7 @@ import {
 import { Text } from "react-native-elements"
 import { AppHeader, BodyView, SearchResult } from "../../components"
 import { useTarot } from "../../hooks/useTarot"
+import { FlatList } from "react-native-gesture-handler"
 
 export const SearchHome = () => {
   const [term, setTerm] = useState<string>("")
@@ -71,11 +72,16 @@ export const SearchHome = () => {
         style={{ flex: 1 }}
       >
         {loaded ? (
-          <ScrollView>
+          <View>
             {results.length > 0 ? (
-              results!.map((item, index) => (
-                <SearchResult key={`${item}${index}`} {...item} />
-              ))
+              // results!.map((item, index) => (
+              //   <SearchResult key={`${item}${index}`} {...item} />
+              // ))
+              <FlatList
+                data={results}
+                renderItem={({ item }) => <SearchResult {...item} />}
+                keyExtractor={(item, index) => `${item}${index}`}
+              />
             ) : (
               <View
                 style={{
@@ -94,7 +100,7 @@ export const SearchHome = () => {
                 </Text>
               </View>
             )}
-          </ScrollView>
+          </View>
         ) : (
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
