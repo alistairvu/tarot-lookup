@@ -8,7 +8,6 @@ import {
   useColorScheme,
   View,
 } from "react-native"
-import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view"
 import { Text } from "react-native-elements"
 import axios from "axios"
 import { AppHeader, BodyView, SearchResult } from "../components"
@@ -41,7 +40,8 @@ export const SearchHome = () => {
 
   useEffect(() => {
     setLoaded(false)
-    getResults(term)
+    const debouncer = setTimeout(() => getResults(term), 500)
+    return () => clearTimeout(debouncer)
   }, [term])
 
   return (
