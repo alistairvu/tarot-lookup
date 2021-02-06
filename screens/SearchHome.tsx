@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native"
 import { Text } from "react-native-elements"
-import axios from "axios"
 import { AppHeader, BodyView, SearchResult } from "../components"
 import { useTarot } from "../hooks/useTarot"
 

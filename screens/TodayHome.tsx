@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useTarot } from "../hooks/useTarot"
 import { Image, Text } from "react-native-elements"
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  useColorScheme,
-  ActivityIndicator,
-} from "react-native"
+import { View, StyleSheet, Dimensions, useColorScheme } from "react-native"
 import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
-import { AppHeader, BodyView } from "../components"
-import { useNavigation } from "@react-navigation/native"
+import { AppHeader, BodyView, HomeBody } from "../components"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const TodayHome = () => {
@@ -22,7 +15,6 @@ export const TodayHome = () => {
   const [image, setImage] = useState()
   const [reverse, setReverse] = useState<boolean>()
   const { drawCard } = useTarot()
-  const navigation = useNavigation()
   const colorScheme = useColorScheme()
 
   const checkDrawn = async () => {
@@ -84,53 +76,18 @@ export const TodayHome = () => {
     }, 500)
   }
 
-  const generateBody = () =>
-    loaded ? (
-      <View style={styles.innerContainer}>
-        <Image
-          source={image || require("../assets/cards/ar01.webp")}
-          style={{
-            ...styles.image,
-            transform: reverse ? [{ rotate: "180deg" }] : [],
-          }}
-          PlaceholderContent={<ActivityIndicator />}
-        />
-        <Text
-          h4
-          style={{
-            ...styles.h4Text,
-            textAlign: "center",
-            color: colorScheme === "dark" ? "white" : "#222222",
-          }}
-        >
-          Today's card is {"\n" + name} {reverse && "(Reversed)"}
-        </Text>
-        <Button
-          title="Explore this Card"
-          buttonStyle={{
-            ...styles.button,
-            backgroundColor: colorScheme === "dark" ? "white" : "#222222",
-          }}
-          containerStyle={{ padding: 10 }}
-          titleStyle={{
-            fontWeight: "600",
-            color: colorScheme === "dark" ? "#222222" : "white",
-          }}
-          onPress={() => navigation.navigate("Result", { shortName, name })}
-        />
-      </View>
-    ) : (
-      <View style={styles.innerContainer}>
-        <ActivityIndicator />
-      </View>
-    )
-
   return (
     <BodyView>
       <AppHeader text="My Day" />
 
       {pressed ? (
-        generateBody()
+        <HomeBody
+          loaded={loaded}
+          image={image}
+          name={name}
+          shortName={shortName}
+          reverse={reverse}
+        />
       ) : (
         <View style={styles.innerContainer}>
           <View style={styles.blankContainer}>

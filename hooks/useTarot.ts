@@ -1,6 +1,9 @@
+import { useNavigation } from "@react-navigation/native"
 import { tarotData } from "../assets/data"
 
 export const useTarot = () => {
+  const navigation = useNavigation()
+
   const drawCard = () => {
     const index = Math.floor(Math.random() * tarotData.cards.length)
     const card = tarotData.cards[index]
@@ -32,5 +35,12 @@ export const useTarot = () => {
     return [...results]
   }
 
-  return { drawCard, findCard, searchCards }
+  const goToResult = (name: string, shortName: string) => {
+    navigation.navigate("Result", {
+      name,
+      shortName,
+    })
+  }
+
+  return { drawCard, findCard, searchCards, goToResult }
 }
