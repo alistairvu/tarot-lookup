@@ -11,7 +11,7 @@ import { Text, Image } from "react-native-elements"
 
 interface SearchResultInterface {
   shortName: string
-  imageLink: string
+  imageLink: any
   name: string
   type: string
 }
@@ -40,7 +40,7 @@ export const SearchResult = ({
       }
     >
       <Image
-        source={{ uri: imageLink }}
+        source={imageLink}
         style={styles.image}
         PlaceholderContent={<ActivityIndicator />}
       />

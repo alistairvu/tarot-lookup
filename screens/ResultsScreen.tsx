@@ -7,14 +7,15 @@ import {
   ScrollView,
   useColorScheme,
 } from "react-native"
-import axios from "axios"
 import { AppHeader, BodyView } from "../components"
 import { useRoute } from "@react-navigation/native"
+import { useTarot } from "../hooks/useTarot"
 
 interface CardData {
   upMeaning: string
   revMeaning: string
   description: string
+  imageLink?: any
 }
 
 export const ResultsScreen = () => {
@@ -22,17 +23,21 @@ export const ResultsScreen = () => {
   const [displayData, setDisplayData] = useState<CardData>()
   const [loaded, setLoaded] = useState<boolean>(false)
   const route = useRoute<any>()
+  const { findCard } = useTarot()
 
-  const fetchData = async () => {
-    const res = await axios.get(
-      `https://rws-cards-api.herokuapp.com/api/v1/cards/${route.params.shortName}`
-    )
-    const { card } = res.data
-    const { meaning_up, meaning_rev, desc } = card
+  const fetchData = () => {
+    const card = findCard(route.params.shortName)
+
+    if (card === undefined) {
+      return
+    }
+
+    const { meaning_up, meaning_rev, desc, image } = card
     setDisplayData({
       upMeaning: meaning_up,
       revMeaning: meaning_rev,
       description: desc,
+      imageLink: image,
     })
     setLoaded(true)
   }
@@ -48,9 +53,7 @@ export const ResultsScreen = () => {
         {loaded ? (
           <ScrollView contentContainerStyle={styles.container}>
             <Image
-              source={{
-                uri: `https://tarot-photo-api.herokuapp.com/images/${route.params.shortName}`,
-              }}
+              source={displayData?.imageLink}
               style={styles.image}
               PlaceholderContent={<ActivityIndicator />}
             />
@@ -82,7 +85,7 @@ export const ResultsScreen = () => {
                   color: colorScheme === "dark" ? "white" : "#222222",
                 }}
               >
-                REVERSE MEANING
+                REVERSED MEANING
               </Text>
               <Text
                 style={{

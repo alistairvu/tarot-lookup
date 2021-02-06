@@ -11,21 +11,20 @@ import {
 import { Text } from "react-native-elements"
 import axios from "axios"
 import { AppHeader, BodyView, SearchResult } from "../components"
+import { useTarot } from "../hooks/useTarot"
 
 export const SearchHome = () => {
   const [term, setTerm] = useState<string>("")
   const [results, setResults] = useState<Array<any>>([])
   const [loaded, setLoaded] = useState<boolean>(false)
   const colorScheme = useColorScheme()
+  const { searchCards } = useTarot()
 
-  const getResults = async (term: string) => {
-    const res = await axios.get(
-      `https://rws-cards-api.herokuapp.com/api/v1/cards/search?q=${term}`
-    )
-    const { cards } = res.data
+  const getResults = (term: string) => {
+    const cards = searchCards(term)
     const cardData = cards.map((item: any) => ({
       shortName: item.name_short,
-      imageLink: `https://tarot-photo-api.herokuapp.com/images/${item.name_short}`,
+      imageLink: item.image,
       name: item.name,
       type:
         item.suit === undefined
@@ -40,7 +39,7 @@ export const SearchHome = () => {
 
   useEffect(() => {
     setLoaded(false)
-    const debouncer = setTimeout(() => getResults(term), 500)
+    const debouncer = setTimeout(() => getResults(term), 300)
     return () => clearTimeout(debouncer)
   }, [term])
 

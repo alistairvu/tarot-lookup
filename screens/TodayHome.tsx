@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useTarot } from "../hooks/useTarot"
 import { Image, Text } from "react-native-elements"
 import {
   View,
@@ -10,7 +11,6 @@ import {
 import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView } from "../components"
-import axios from "axios"
 import { useNavigation } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
@@ -19,14 +19,16 @@ export const TodayHome = () => {
   const [loaded, setLoaded] = useState<boolean>(false)
   const [shortName, setShortName] = useState<string>("")
   const [name, setName] = useState<string>("")
+  const [image, setImage] = useState()
   const [reverse, setReverse] = useState<boolean>()
+  const { drawCard } = useTarot()
   const navigation = useNavigation()
   const colorScheme = useColorScheme()
 
   const checkDrawn = async () => {
     try {
       const value = await AsyncStorage.getItem("@last_drawn")
-      if (value === null) {
+      if (value === null || JSON.parse(value).drawnImage === undefined) {
         setPressed(false)
         return
       }
@@ -35,6 +37,7 @@ export const TodayHome = () => {
         drawnName,
         drawnShortName,
         drawnReverse,
+        drawnImage,
       } = JSON.parse(value)
       if (
         new Date(dateString).setHours(0, 0, 0, 0) ===
@@ -43,6 +46,7 @@ export const TodayHome = () => {
         setName(drawnName)
         setShortName(drawnShortName)
         setReverse(drawnReverse)
+        setImage(drawnImage)
         setPressed(true)
         setLoaded(true)
       }
@@ -58,34 +62,33 @@ export const TodayHome = () => {
   const handlePress = async () => {
     setPressed(true)
     setLoaded(false)
-    const res = await axios.get(
-      "https://rws-cards-api.herokuapp.com/api/v1/cards/random?n=1"
-    )
-    const { cards } = res.data
-    const { name, name_short } = cards[0]
-    const reversed = Math.random() > 0.5
-    setName(name)
-    setReverse(reversed)
-    setShortName(name_short)
-    setLoaded(true)
-    await AsyncStorage.setItem(
-      "@last_drawn",
-      JSON.stringify({
-        dateString: new Date().toDateString(),
-        drawnName: name,
-        drawnShortName: name_short,
-        drawnReverse: reversed,
-      })
-    )
+    setTimeout(async () => {
+      const { card, reversed } = drawCard()
+      console.log(card)
+      const { name, name_short, image } = card
+      setName(name)
+      setShortName(name_short)
+      setImage(image)
+      setReverse(reversed)
+      await AsyncStorage.setItem(
+        "@last_drawn",
+        JSON.stringify({
+          dateString: new Date().toDateString(),
+          drawnName: name,
+          drawnShortName: name_short,
+          drawnReverse: reversed,
+          drawnImage: image,
+        })
+      )
+      setLoaded(true)
+    }, 500)
   }
 
   const generateBody = () =>
     loaded ? (
       <View style={styles.innerContainer}>
         <Image
-          source={{
-            uri: `https://tarot-photo-api.herokuapp.com/images/${shortName}`,
-          }}
+          source={image || require("../assets/cards/ar01.webp")}
           style={{
             ...styles.image,
             transform: reverse ? [{ rotate: "180deg" }] : [],
