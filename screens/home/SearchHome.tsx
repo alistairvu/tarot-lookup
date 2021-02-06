@@ -9,8 +9,8 @@ import {
   View,
 } from "react-native"
 import { Text } from "react-native-elements"
-import { AppHeader, BodyView, SearchResult } from "../components"
-import { useTarot } from "../hooks/useTarot"
+import { AppHeader, BodyView, SearchResult } from "../../components"
+import { useTarot } from "../../hooks/useTarot"
 
 export const SearchHome = () => {
   const [term, setTerm] = useState<string>("")
@@ -44,7 +44,7 @@ export const SearchHome = () => {
 
   return (
     <BodyView>
-      <AppHeader text="Browse Cards" />
+      <AppHeader text="Search Cards" />
       <SearchBar
         platform={"ios"}
         inputStyle={{ color: colorScheme === "dark" ? "white" : "#222222" }}

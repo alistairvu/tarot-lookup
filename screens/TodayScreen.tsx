@@ -1,7 +1,7 @@
 import React from "react"
 import { createStackNavigator } from "@react-navigation/stack"
 import { ResultsScreen } from "./ResultsScreen"
-import { TodayHome } from "./TodayHome"
+import { TodayHome } from "./home/TodayHome"
 import { Dimensions } from "react-native"
 
 const Stack = createStackNavigator()

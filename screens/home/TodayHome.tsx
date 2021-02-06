@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
-import { useTarot } from "../hooks/useTarot"
-import { Image, Text } from "react-native-elements"
+import { useTarot } from "../../hooks/useTarot"
+import { Text } from "react-native-elements"
 import { View, StyleSheet, Dimensions, useColorScheme } from "react-native"
 import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
-import { AppHeader, BodyView, HomeBody } from "../components"
+import { AppHeader, BodyView, HomeBody } from "../../components"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export const TodayHome = () => {
