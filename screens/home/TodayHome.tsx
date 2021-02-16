@@ -23,21 +23,17 @@ export const TodayHome = () => {
 
   const dispatch = useDispatch()
   const { card, lastDraw } = useSelector((state: rootState) => state.todayTarot)
-  console.log({ card, lastDraw })
 
   const { drawCard } = useTarot()
   const colorScheme = useColorScheme()
 
   const checkDrawn = () => {
     try {
-      if (!card.name) {
+      if (!card.name || card.name.length <= 0) {
         setPressed(false)
+        setLoaded(false)
         return
       }
-      console.log(
-        new Date(lastDraw).setHours(0, 0, 0, 0) ===
-          new Date().setHours(0, 0, 0, 0)
-      )
       if (
         new Date(lastDraw).setHours(0, 0, 0, 0) ===
         new Date().setHours(0, 0, 0, 0)
@@ -55,7 +51,7 @@ export const TodayHome = () => {
     checkDrawn()
   }, [card])
 
-  const handlePress = async () => {
+  const handlePress = () => {
     setPressed(true)
     setLoaded(false)
     setTimeout(() => {
@@ -64,8 +60,9 @@ export const TodayHome = () => {
         name: card.name,
         shortName: card.name_short,
         image: card.image,
-        reversed: reversed,
+        reverse: reversed,
       }
+      setTodayCard(drawnCard)
       dispatch(recordCardDraw({ card: drawnCard, lastDraw: Date.now() }))
       setLoaded(true)
     }, 500)
@@ -78,10 +75,10 @@ export const TodayHome = () => {
       {pressed ? (
         <HomeBody
           loaded={loaded}
-          image={todayCard!.image}
-          name={todayCard!.name}
-          shortName={todayCard!.shortName}
-          reverse={todayCard!.reverse}
+          image={todayCard?.image}
+          name={todayCard?.name || ""}
+          shortName={todayCard?.shortName || ""}
+          reverse={todayCard?.reverse}
         />
       ) : (
         <View style={styles.innerContainer}>
