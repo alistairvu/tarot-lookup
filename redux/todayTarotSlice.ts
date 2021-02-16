@@ -7,7 +7,7 @@ interface CardInterface {
   image: string
 }
 
-const initalState = {
+const initialState = {
   card: {} as CardInterface,
   lastDraw: Date.now(),
 }
@@ -21,7 +21,7 @@ const tarotSlice = createSlice({
 
   reducers: {
     recordCardDraw: (state, action) => action.payload,
-    resetCards: () => initalState,
+    resetCards: () => initialState,
   },
 })
 
