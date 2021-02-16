@@ -1,11 +1,11 @@
 import { useNavigation } from "@react-navigation/native"
-import { useRecoilValue } from "recoil"
+import { useSelector } from "react-redux"
 import { tarotData } from "../assets/data"
-import { settingsAtom } from "../recoil/settingsState"
+import { rootState } from "../redux"
 
 export const useTarot = () => {
   const navigation = useNavigation()
-  const settings = useRecoilValue(settingsAtom)
+  const settings = useSelector((store: rootState) => store.settings)
 
   const drawCard = () => {
     const index = Math.floor(Math.random() * tarotData.cards.length)

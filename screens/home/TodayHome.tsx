@@ -5,59 +5,44 @@ import { View, StyleSheet, Dimensions, useColorScheme } from "react-native"
 import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView, HomeBody } from "../../components"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useRecoilState } from "recoil"
-import { settingsAtom } from "../../recoil/settingsState"
+import { useDispatch, useSelector } from "react-redux"
+import { rootState } from "../../redux"
+import { recordCardDraw } from "../../redux/todayTarotSlice"
+
+interface CardInterface {
+  name: string
+  shortName: string
+  reverse: boolean
+  image: string
+}
 
 export const TodayHome = () => {
   const [pressed, setPressed] = useState<boolean>(false)
   const [loaded, setLoaded] = useState<boolean>(false)
-  const [shortName, setShortName] = useState<string>("")
-  const [name, setName] = useState<string>("")
-  const [image, setImage] = useState()
-  const [reverse, setReverse] = useState<boolean>()
+  const [todayCard, setTodayCard] = useState<CardInterface>()
+
+  const dispatch = useDispatch()
+  const { card, lastDraw } = useSelector((state: rootState) => state.todayTarot)
+  console.log({ card, lastDraw })
+
   const { drawCard } = useTarot()
   const colorScheme = useColorScheme()
 
-  const [settings, setSettings] = useRecoilState(settingsAtom)
-
-  const fetchSettings = async () => {
+  const checkDrawn = () => {
     try {
-      const settingsData = await AsyncStorage.getItem("@settings")
-      if (settingsData === null || JSON.parse(settingsData) === null) {
-        console.log("is null")
-        await AsyncStorage.setItem("@settings", JSON.stringify(settings))
-        return
-      } else {
-        setSettings(JSON.parse(settingsData))
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const checkDrawn = async () => {
-    try {
-      const value = await AsyncStorage.getItem("@last_drawn")
-      if (value === null || JSON.parse(value).drawnImage === undefined) {
+      if (!card.name) {
         setPressed(false)
         return
       }
-      const {
-        dateString,
-        drawnName,
-        drawnShortName,
-        drawnReverse,
-        drawnImage,
-      } = JSON.parse(value)
+      console.log(
+        new Date(lastDraw).setHours(0, 0, 0, 0) ===
+          new Date().setHours(0, 0, 0, 0)
+      )
       if (
-        new Date(dateString).setHours(0, 0, 0, 0) ===
+        new Date(lastDraw).setHours(0, 0, 0, 0) ===
         new Date().setHours(0, 0, 0, 0)
       ) {
-        setName(drawnName)
-        setShortName(drawnShortName)
-        setReverse(drawnReverse)
-        setImage(drawnImage)
+        setTodayCard(card)
         setPressed(true)
         setLoaded(true)
       }
@@ -67,31 +52,21 @@ export const TodayHome = () => {
   }
 
   useEffect(() => {
-    fetchSettings()
     checkDrawn()
-  }, [])
+  }, [card])
 
   const handlePress = async () => {
     setPressed(true)
     setLoaded(false)
-    setTimeout(async () => {
+    setTimeout(() => {
       const { card, reversed } = drawCard()
-      console.log(card)
-      const { name, name_short, image } = card
-      setName(name)
-      setShortName(name_short)
-      setImage(image)
-      setReverse(reversed)
-      await AsyncStorage.setItem(
-        "@last_drawn",
-        JSON.stringify({
-          dateString: new Date().toDateString(),
-          drawnName: name,
-          drawnShortName: name_short,
-          drawnReverse: reversed,
-          drawnImage: image,
-        })
-      )
+      const drawnCard = {
+        name: card.name,
+        shortName: card.name_short,
+        image: card.image,
+        reversed: reversed,
+      }
+      dispatch(recordCardDraw({ card: drawnCard, lastDraw: Date.now() }))
       setLoaded(true)
     }, 500)
   }
@@ -103,10 +78,10 @@ export const TodayHome = () => {
       {pressed ? (
         <HomeBody
           loaded={loaded}
-          image={image}
-          name={name}
-          shortName={shortName}
-          reverse={reverse}
+          image={todayCard!.image}
+          name={todayCard!.name}
+          shortName={todayCard!.shortName}
+          reverse={todayCard!.reverse}
         />
       ) : (
         <View style={styles.innerContainer}>

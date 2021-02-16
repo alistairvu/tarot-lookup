@@ -1,22 +1,23 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import React, { useEffect } from "react"
-import { StyleSheet, Switch, useColorScheme, View } from "react-native"
+import React from "react"
+import {
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native"
 import { Text } from "react-native-elements"
-import { useRecoilState } from "recoil"
 import { AppHeader, BodyView } from "../components"
-import { settingsAtom } from "../recoil/settingsState"
+import { flipReverse } from "../redux/settingsSlice"
+import { useSelector, useDispatch } from "react-redux"
+import { rootState } from "../redux"
+import { resetCards } from "../redux/todayTarotSlice"
 
 export const SettingsScreen = () => {
   const colorScheme = useColorScheme()
-  const [settings, setSettings] = useRecoilState(settingsAtom)
-
-  const handleSettingsChange = async () => {
-    await AsyncStorage.setItem("@settings", JSON.stringify(settings))
-  }
-
-  useEffect(() => {
-    handleSettingsChange()
-  }, [settings])
+  const dispatch = useDispatch()
+  const settings = useSelector((state: rootState) => state.settings)
+  const { enableReverse } = settings
 
   return (
     <BodyView>
@@ -41,15 +42,30 @@ export const SettingsScreen = () => {
           </Text>
           <Switch
             ios_backgroundColor={colorScheme === "dark" ? "#1c1b1d" : "#f0f0f0"}
-            value={settings.enableReverse}
-            onValueChange={() =>
-              setSettings((prev) => ({
-                ...prev,
-                enableReverse: !prev.enableReverse,
-              }))
-            }
+            value={enableReverse}
+            onValueChange={() => {
+              dispatch(flipReverse())
+            }}
           />
         </View>
+        <TouchableOpacity
+          style={{
+            ...styles.container,
+            backgroundColor: colorScheme === "dark" ? "black" : "white",
+            borderBottomColor: colorScheme === "dark" ? "#272628" : "#dfdfe3",
+            borderTopColor: colorScheme === "dark" ? "#272628" : "#dfdfe3",
+          }}
+          onPress={() => dispatch(resetCards())}
+        >
+          <Text
+            style={{
+              ...styles.text,
+              color: colorScheme === "dark" ? "white" : "#222222",
+            }}
+          >
+            Reset Data
+          </Text>
+        </TouchableOpacity>
       </View>
     </BodyView>
   )
