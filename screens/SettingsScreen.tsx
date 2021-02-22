@@ -8,16 +8,14 @@ import {
 } from "react-native"
 import { Text } from "react-native-elements"
 import { AppHeader, BodyView } from "../components"
-import { flipReverse } from "../redux/settingsSlice"
-import { useSelector, useDispatch } from "react-redux"
-import { rootState } from "../redux"
-import { resetCards } from "../redux/todayTarotSlice"
+import useSettings from "../zustand/useSettings"
+import useTarotHistory from "../zustand/useTarotHistory"
 
 export const SettingsScreen = () => {
   const colorScheme = useColorScheme()
-  const dispatch = useDispatch()
-  const settings = useSelector((state: rootState) => state.settings)
-  const { enableReverse } = settings
+  const enableReverse = useSettings((state) => state.enableReverse)
+  const flipReverse = useSettings((state) => state.flipReverse)
+  const resetCards = useTarotHistory((state) => state.resetCards)
 
   return (
     <BodyView>
@@ -44,7 +42,7 @@ export const SettingsScreen = () => {
             ios_backgroundColor={colorScheme === "dark" ? "#1c1b1d" : "#f0f0f0"}
             value={enableReverse}
             onValueChange={() => {
-              dispatch(flipReverse())
+              flipReverse()
             }}
           />
         </View>
@@ -55,7 +53,7 @@ export const SettingsScreen = () => {
             borderBottomColor: colorScheme === "dark" ? "#272628" : "#dfdfe3",
             borderTopColor: colorScheme === "dark" ? "#272628" : "#dfdfe3",
           }}
-          onPress={() => dispatch(resetCards())}
+          onPress={() => resetCards()}
         >
           <Text
             style={{

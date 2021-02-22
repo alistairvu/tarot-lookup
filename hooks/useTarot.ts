@@ -1,16 +1,15 @@
 import { useNavigation } from "@react-navigation/native"
-import { useSelector } from "react-redux"
 import { tarotData } from "../assets/data"
-import { rootState } from "../redux"
+import useSettings from "../zustand/useSettings"
 
 export const useTarot = () => {
   const navigation = useNavigation()
-  const settings = useSelector((store: rootState) => store.settings)
+  const enableReverse = useSettings((state) => state.enableReverse)
 
   const drawCard = () => {
     const index = Math.floor(Math.random() * tarotData.cards.length)
     const card = tarotData.cards[index]
-    const reversed = settings.enableReverse ? Math.random() > 0.5 : false
+    const reversed = enableReverse ? Math.random() > 0.5 : false
     return { card, reversed }
   }
 

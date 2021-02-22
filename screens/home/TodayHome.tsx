@@ -5,9 +5,7 @@ import { View, StyleSheet, Dimensions, useColorScheme } from "react-native"
 import { Button } from "react-native-elements"
 import { FontAwesome5 } from "@expo/vector-icons"
 import { AppHeader, BodyView, HomeBody } from "../../components"
-import { useDispatch, useSelector } from "react-redux"
-import { rootState } from "../../redux"
-import { recordCardDraw } from "../../redux/todayTarotSlice"
+import useTarotHistory from "../../zustand/useTarotHistory"
 
 interface CardInterface {
   name: string
@@ -21,8 +19,11 @@ export const TodayHome = () => {
   const [loaded, setLoaded] = useState<boolean>(false)
   const [todayCard, setTodayCard] = useState<CardInterface>()
 
-  const dispatch = useDispatch()
-  const { card, lastDraw } = useSelector((state: rootState) => state.todayTarot)
+  const { card, lastDraw, recordCardDraw } = useTarotHistory((state) => ({
+    card: state.card,
+    lastDraw: state.lastDraw,
+    recordCardDraw: state.recordCardDraw,
+  }))
 
   const { drawCard } = useTarot()
   const colorScheme = useColorScheme()
@@ -63,7 +64,7 @@ export const TodayHome = () => {
         reverse: reversed,
       }
       setTodayCard(drawnCard)
-      dispatch(recordCardDraw({ card: drawnCard, lastDraw: Date.now() }))
+      recordCardDraw({ card: drawnCard, lastDraw: Date.now() })
       setLoaded(true)
     }, 500)
   }
